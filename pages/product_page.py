@@ -3,8 +3,6 @@ from .locators import ProductPageLocators
 
 class ProductPage(BasePage):
     def should_be_product_in_basket(self):
-        #self.add_item_to_busket()
-        #self.solve_quizes_and_get_code()
         self.should_have_same_name()
         self.should_have_same_price()
 

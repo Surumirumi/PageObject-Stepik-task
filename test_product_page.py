@@ -1,9 +1,42 @@
 from selenium.webdriver.common.by import By
 from pages.main_page import MainPage
 from pages.product_page import ProductPage
+from pages.login_page import LoginPage
+from pages.basket_page import BasketPage
 import time
 import pytest
-from pages.basket_page import BasketPage
+
+@pytest.mark.new
+class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        login_link= "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer6"
+        email = str(time.time()) + "@fakemail.org"
+        password = "321321qwe"
+        login_page = LoginPage(browser, browser.current_url)
+        self.page = MainPage(browser, login_link)
+        self.page.open()
+        self.page.go_to_login_page()
+        login_page.register_new_user(email=email, password=password)
+        login_page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser):
+        link = f"http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer6"
+        page = MainPage(browser, link)
+        page.open()
+        product_page = ProductPage(browser, browser.current_url)
+        product_page.should_not_be_success_message()
+        
+    def test_user_can_add_product_to_basket(self, browser):
+        link = f"http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer12"
+        page = MainPage(browser, link)
+        page.open()
+        product_page = ProductPage(browser, browser.current_url)
+        product_page.add_item_to_busket()
+        product_page.solve_quizes_and_get_code()
+        product_page.should_be_product_in_basket()
+
+    
 
 @pytest.mark.parametrize('promo_offer', ["0","1", "3", "4", "5", "6", pytest.param("7", marks=pytest.mark.xfail(reason="won't be wixed")), "8", "9"])
 def  test_guest_can_add_product_to_basket(browser, promo_offer):
