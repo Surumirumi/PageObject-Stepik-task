@@ -6,7 +6,6 @@ from pages.basket_page import BasketPage
 import time
 import pytest
 
-@pytest.mark.new
 class TestUserAddToBasketFromProductPage():
     @pytest.fixture(scope="function", autouse=True)
     def setup(self, browser):
